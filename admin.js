@@ -16,7 +16,7 @@ import {
   serverTimestamp,
   setDoc,
 } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
-import { adminUid, firebaseConfig } from "./firebase-config.js";
+import { adminEmail, firebaseConfig } from "./firebase-config.js";
 
 const elements = {
   notice: document.querySelector("[data-notice]"),
@@ -46,7 +46,6 @@ const categories = {
 const isConfigured = Object.values(firebaseConfig).every(
   (value) => value && !value.startsWith("REPLACE_WITH"),
 );
-const hasAdminUid = adminUid && !adminUid.startsWith("REPLACE_WITH");
 
 function showNotice(message, kind = "error") {
   elements.notice.textContent = message;
@@ -250,9 +249,9 @@ function collectOfferIds() {
     .map((checkbox) => checkbox.value);
 }
 
-if (!isConfigured || !hasAdminUid) {
+if (!isConfigured || !adminEmail) {
   elements.loginForm.hidden = true;
-  showNotice("أكمل إعداد firebase-config.js وعرّف معرّف المدير قبل تسجيل الدخول.");
+  showNotice("تحقّق من إعدادات Firebase وبريد المدير في firebase-config.js.");
 } else {
   const app = initializeApp(firebaseConfig);
   const auth = getAuth(app);
@@ -264,10 +263,12 @@ if (!isConfigured || !hasAdminUid) {
       elements.adminPanel.hidden = true;
       return;
     }
-    if (user.uid !== adminUid) {
+    if (user.email?.toLowerCase() !== adminEmail.toLowerCase() || !user.emailVerified) {
       try {
         await signOut(auth);
-        showNotice("هذا الحساب غير مخوّل لإدارة الموقع.");
+        showNotice(user.email?.toLowerCase() !== adminEmail.toLowerCase()
+          ? "هذا البريد غير مخوّل لإدارة الموقع."
+          : "تحقّق من بريد المدير عبر رسالة التحقق من Firebase ثم سجّل الدخول مجددًا.");
       } catch (error) {
         showNotice(errorMessage(error));
       }
