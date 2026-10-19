@@ -2,6 +2,7 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/fireba
 import {
   getAuth,
   onAuthStateChanged,
+  sendEmailVerification,
   signInWithEmailAndPassword,
   signOut,
 } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
@@ -263,12 +264,22 @@ if (!isConfigured || !adminEmail) {
       elements.adminPanel.hidden = true;
       return;
     }
-    if (user.email?.toLowerCase() !== adminEmail.toLowerCase() || !user.emailVerified) {
+    if (user.email?.toLowerCase() !== adminEmail.toLowerCase()) {
       try {
         await signOut(auth);
-        showNotice(user.email?.toLowerCase() !== adminEmail.toLowerCase()
-          ? "هذا البريد غير مخوّل لإدارة الموقع."
-          : "تحقّق من بريد المدير عبر رسالة التحقق من Firebase ثم سجّل الدخول مجددًا.");
+        showNotice("هذا البريد غير مخوّل لإدارة الموقع.");
+      } catch (error) {
+        showNotice(errorMessage(error));
+      }
+      return;
+    }
+    if (!user.emailVerified) {
+      elements.loginPanel.hidden = false;
+      elements.adminPanel.hidden = true;
+      try {
+        await sendEmailVerification(user);
+        await signOut(auth);
+        showNotice("أرسلنا رابط تأكيد إلى بريد المدير. افتح الرسالة وأكّد البريد، ثم سجّل الدخول مجددًا.", "success");
       } catch (error) {
         showNotice(errorMessage(error));
       }
