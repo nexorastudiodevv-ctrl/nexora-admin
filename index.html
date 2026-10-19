@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex, nofollow" />
+    <meta name="theme-color" content="#f5f4ef" />
+    <title>لوحة إدارة Nexora</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="admin.css" />
+    <script type="module" src="admin.js"></script>
+  </head>
+  <body>
+    <main class="page-shell">
+      <header class="page-header">
+        <div>
+          <p class="eyebrow">NEXORA STUDIO EG</p>
+          <h1>لوحة إدارة المحتوى</h1>
+          <p>أدر مقالات المدونة وعروض التسوق بالعمولة من هاتفك أو حاسوبك.</p>
+        </div>
+        <a class="text-link" href="../blog/index.html">عرض المدونة ↗</a>
+      </header>
+
+      <p class="notice" data-notice role="status" aria-live="polite" hidden></p>
+
+      <section class="panel login-panel" data-login-panel aria-labelledby="login-title">
+        <h2 id="login-title">تسجيل دخول المدير</h2>
+        <p class="muted">استخدم حساب المدير الذي أنشأته في Firebase Authentication.</p>
+        <form data-login-form>
+          <label>البريد الإلكتروني<input name="email" type="email" autocomplete="username" required /></label>
+          <label>كلمة المرور<input name="password" type="password" autocomplete="current-password" required /></label>
+          <button class="button button-primary" type="submit">دخول آمن</button>
+        </form>
+        <p class="setup-hint">قبل الدخول، أدخل إعدادات مشروع Firebase ومعرّف المدير في <code>firebase-config.js</code>.</p>
+      </section>
+
+      <section data-admin-panel hidden>
+        <div class="toolbar">
+          <p>تم تسجيل الدخول بصفتك <strong data-user-email></strong></p>
+          <button class="button button-quiet" type="button" data-sign-out>تسجيل الخروج</button>
+        </div>
+
+        <nav class="tabs" aria-label="أقسام لوحة التحكم">
+          <button class="tab is-active" type="button" data-tab="articles" aria-selected="true">المقالات</button>
+          <button class="tab" type="button" data-tab="offers" aria-selected="false">عروض العمولة</button>
+        </nav>
+
+        <section class="tab-panel is-active" data-panel="articles">
+          <div class="section-heading"><div><h2>المقالات</h2><p class="muted">اكتب المقال كنص عادي؛ كل فقرة تفصلها بسطر فارغ.</p></div><button class="button button-primary" type="button" data-new-article>＋ مقال جديد</button></div>
+          <div class="content-layout">
+            <form class="panel editor" data-article-form hidden>
+              <h3 data-article-form-title>مقال جديد</h3>
+              <input name="id" type="hidden" />
+              <label>عنوان المقال<input name="title" maxlength="140" required /></label>
+              <label>الرابط المختصر (بالإنجليزية)<input name="slug" pattern="[a-z0-9]+(-[a-z0-9]+)*" maxlength="100" placeholder="example-article" required /><small>يستخدم هذا الاسم في رابط المقال، ولا يمكن تغييره بعد النشر.</small></label>
+              <label>القسم<select name="category" required><option value="ai">الذكاء الاصطناعي</option><option value="programming">البرمجة والتطوير</option><option value="pdf">ملفات PDF</option><option value="wifi">Wi-Fi والشبكات</option><option value="quran-hadith">القرآن والحديث</option><option value="android-safety">أمان تطبيقات Android</option><option value="shopping">التسوق والعروض</option></select></label>
+              <label>ملخص المقال<textarea name="excerpt" rows="3" maxlength="300" required></textarea></label>
+              <label>محتوى المقال<textarea name="content" rows="12" required></textarea><small>النص آمن افتراضيًا ولا يقبل HTML. استخدم ## قبل عنوان فرعي، و - قبل عناصر القائمة.</small></label>
+              <label>تاريخ النشر<input name="publishedAt" type="date" required /></label>
+              <fieldset><legend>عروض عمولة مرتبطة بالمقال</legend><div class="offer-checkboxes" data-article-offers><p class="muted">أضف عرضًا من قسم عروض العمولة أولًا.</p></div></fieldset>
+              <label class="checkbox-label"><input name="isPublished" type="checkbox" /> نشر المقال على الموقع</label>
+              <div class="form-actions"><button class="button button-primary" type="submit">حفظ المقال</button><button class="button button-quiet" type="button" data-cancel-article>إلغاء</button></div>
+            </form>
+            <div class="panel list-panel"><h3>المقالات المحفوظة</h3><div class="record-list" data-article-list><p class="muted">جارٍ التحميل…</p></div></div>
+          </div>
+        </section>
+
+        <section class="tab-panel" data-panel="offers" hidden>
+          <div class="section-heading"><div><h2>عروض التسوق بالعمولة</h2><p class="muted">أضف متاجر وشركات وعروضًا، ثم اربطها بالمقالات.</p></div><button class="button button-primary" type="button" data-new-offer>＋ عرض جديد</button></div>
+          <div class="content-layout">
+            <form class="panel editor" data-offer-form hidden>
+              <h3 data-offer-form-title>عرض جديد</h3>
+              <input name="id" type="hidden" />
+              <label>الشركة أو المتجر<input name="partner" maxlength="100" required /></label>
+              <label>اسم المنتج أو العرض<input name="product" maxlength="140" required /></label>
+              <label>رابط التسويق بالعمولة<input name="url" type="url" inputmode="url" placeholder="https://" required /></label>
+              <label>نسبة العمولة (%)<input name="commissionRate" type="number" min="0" max="100" step="0.01" inputmode="decimal" required /></label>
+              <label>كود الخصم (اختياري)<input name="discountCode" maxlength="50" /></label>
+              <label>وصف العرض<textarea name="description" rows="3" maxlength="300" required></textarea></label>
+              <label>رابط صورة المنتج (اختياري)<input name="imageUrl" type="url" inputmode="url" placeholder="https://" /></label>
+              <label class="checkbox-label"><input name="isPublished" type="checkbox" /> إظهار العرض في المقالات المرتبطة</label>
+              <div class="form-actions"><button class="button button-primary" type="submit">حفظ العرض</button><button class="button button-quiet" type="button" data-cancel-offer>إلغاء</button></div>
+            </form>
+            <div class="panel list-panel"><h3>العروض المحفوظة</h3><div class="record-list" data-offer-list><p class="muted">جارٍ التحميل…</p></div></div>
+          </div>
+        </section>
+      </section>
+    </main>
+  </body>
+</html>
