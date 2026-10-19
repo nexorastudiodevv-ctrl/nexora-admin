@@ -1,6 +1,6 @@
 # لوحة Nexora لإدارة المقالات والعروض
 
-واجهة عربية متجاوبة تعمل من المتصفح، وتستخدم Firebase Authentication لتسجيل المدير وCloud Firestore لتخزين المقالات وعروض العمولة. اللوحة مستقلة في هذا المجلد ويمكن رفع محتويات `admin/` إلى مستودع واستضافة منفصلين؛ لا ترفع إعدادات مشروعك إلا بعد استبدال القيم التجريبية.
+واجهة عربية متجاوبة تعمل من المتصفح، وتستخدم Firebase Authentication لتسجيل المدير وCloud Firestore لتخزين المقالات وعروض العمولة. اللوحة مستقلة في هذا المجلد ويمكن رفع محتويات `admin/` إلى مستودع واستضافة منفصلين.
 
 ## تثبيت Firebase للتطوير
 
@@ -8,7 +8,7 @@
 
 ## إعداد Firebase
 
-1. في مشروع Firebase، أضف تطبيق Web، وأنشئ قاعدة Cloud Firestore.
+1. إعدادات تطبيق Web موجودة في `firebase-config.js`. أنشئ قاعدة Cloud Firestore في مشروع Firebase نفسه.
 2. من Authentication فعّل مزوّد **Email/Password** وأنشئ حساب المدير.
 3. انسخ `apiKey` و`authDomain` و`projectId` و`appId` من إعدادات تطبيق الويب إلى `firebase-config.js`.
 4. انسخ UID الخاص بحساب المدير إلى `adminUid` في `firebase-config.js`، واستبدل `REPLACE_WITH_ADMIN_USER_UID` بالـ UID نفسه في `firestore.rules`، ثم انشر القواعد إلى قاعدة البيانات.
