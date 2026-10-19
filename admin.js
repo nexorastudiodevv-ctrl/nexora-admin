@@ -2,7 +2,6 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/fireba
 import {
   getAuth,
   onAuthStateChanged,
-  sendEmailVerification,
   signInWithEmailAndPassword,
   signOut,
 } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
@@ -273,19 +272,6 @@ if (!isConfigured || !adminEmail) {
       }
       return;
     }
-    if (!user.emailVerified) {
-      elements.loginPanel.hidden = false;
-      elements.adminPanel.hidden = true;
-      try {
-        await sendEmailVerification(user);
-        await signOut(auth);
-        showNotice("أرسلنا رابط تأكيد إلى بريد المدير. افتح الرسالة وأكّد البريد، ثم سجّل الدخول مجددًا.", "success");
-      } catch (error) {
-        showNotice(errorMessage(error));
-      }
-      return;
-    }
-
     elements.loginPanel.hidden = true;
     elements.adminPanel.hidden = false;
     elements.userEmail.textContent = user.email || "";

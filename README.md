@@ -11,12 +11,12 @@
 1. إعدادات تطبيق Web موجودة في `firebase-config.js`. أنشئ قاعدة Cloud Firestore في مشروع Firebase نفسه.
 2. من Authentication فعّل مزوّد **Email/Password** وأنشئ حساب المدير.
 3. انسخ `apiKey` و`authDomain` و`projectId` و`appId` من إعدادات تطبيق الويب إلى `firebase-config.js`.
-4. أنشئ حساب المدير بالبريد المحدد في `adminEmail` داخل `firebase-config.js`، ثم أكّد البريد الإلكتروني.
-5. انسخ محتوى `firestore.rules` كاملًا إلى Firestore Rules وانشره. القواعد تقصر الإدارة على بريد المدير المحدد وتتطلب أن يكون البريد مؤكّدًا.
+4. أنشئ حساب المدير بالبريد المحدد في `adminEmail` داخل `firebase-config.js` في Firebase Authentication، واستخدم كلمة مرور قوية.
+5. انسخ محتوى `firestore.rules` كاملًا إلى Firestore Rules وانشره. القواعد تقصر الإدارة على بريد المدير المحدد، وتسمح للزوار بقراءة المستندات المنشورة فقط.
 6. أضف نطاق استضافة اللوحة إلى قائمة **Authorized domains** في Firebase Authentication.
 7. استخدم استضافة تدعم HTTPS وملفات JavaScript modules، ثم افتح `index.html` وسجّل الدخول.
 
-إعداد Web API Key ليس كلمة مرور أو مفتاحًا إداريًا؛ لا تضع أبدًا service-account key أو أسرارًا في ملفات المتصفح. الصلاحيات الفعلية يفرضها Firebase Authentication وقواعد Firestore. القواعد المرفقة تقصر صلاحية المدير على البريد المحدد والمؤكد، وتسمح للزوار بقراءة المستندات المنشورة فقط.
+إعداد Web API Key ليس كلمة مرور أو مفتاحًا إداريًا؛ لا تضع أبدًا service-account key أو أسرارًا في ملفات المتصفح. الصلاحيات الفعلية يفرضها Firebase Authentication وقواعد Firestore. القواعد المرفقة تقصر صلاحية المدير على البريد المحدد، وتسمح للزوار بقراءة المستندات المنشورة فقط.
 
 ## ربط الموقع
 
