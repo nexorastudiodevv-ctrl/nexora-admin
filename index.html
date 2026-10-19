@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="robots" content="noindex, nofollow" />
     <meta name="theme-color" content="#f5f4ef" />
+    <link rel="manifest" href="./manifest.webmanifest" />
+    <link rel="icon" type="image/png" sizes="192x192" href="./icons/app-icon-192.png" />
+    <link rel="apple-touch-icon" href="./icons/app-icon-192.png" />
     <title>لوحة إدارة Nexora</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -20,7 +23,10 @@
           <h1>لوحة إدارة المحتوى</h1>
           <p>أدر مقالات المدونة وعروض التسوق بالعمولة من هاتفك أو حاسوبك.</p>
         </div>
-        <a class="text-link" href="../blog/index.html">عرض المدونة ↗</a>
+        <div class="header-links">
+          <button class="button button-quiet" type="button" data-install-app>تثبيت التطبيق</button>
+          <a class="text-link" href="../blog/index.html">عرض المدونة ↗</a>
+        </div>
       </header>
 
       <p class="notice" data-notice role="status" aria-live="polite" hidden></p>
@@ -88,5 +94,6 @@
         </section>
       </section>
     </main>
+    <script type="module" src="./admin-pwa.js"></script>
   </body>
 </html>

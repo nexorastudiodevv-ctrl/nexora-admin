@@ -6,6 +6,10 @@
 
 من جذر مستودع اللوحة شغّل `npm install` لتثبيت Firebase من `package.json`. الواجهة الحالية تستورد Firebase Web SDK كـ JavaScript modules من شبكة Firebase، لذا لا تحتاج إلى خادم Node.js أو خطوة build لتشغيل `index.html`. مجلد `node_modules/` مستثنى من Git.
 
+## تثبيت اللوحة كتطبيق
+
+تحتوي اللوحة على Web App Manifest وخدمة Service Worker وأيقوناتها. انشر جذر هذا المستودع على HTTPS (مثل GitHub Pages)، ثم افتح رابط اللوحة وسجّل الدخول. على Android أو الكمبيوتر استخدم زر **تثبيت التطبيق** أو خيار التثبيت في قائمة المتصفح. على iPhone استخدم **مشاركة ← إضافة إلى الشاشة الرئيسية** في Safari. يلزم اتصال بالإنترنت لتسجيل الدخول والاتصال بـ Firebase؛ وضع عدم الاتصال يعرض صفحة توضح ذلك.
+
 ## إعداد Firebase
 
 1. إعدادات تطبيق Web موجودة في `firebase-config.js`. أنشئ قاعدة Cloud Firestore في مشروع Firebase نفسه.
