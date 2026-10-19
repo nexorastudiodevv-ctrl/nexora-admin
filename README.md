@@ -2,6 +2,10 @@
 
 واجهة عربية متجاوبة تعمل من المتصفح، وتستخدم Firebase Authentication لتسجيل المدير وCloud Firestore لتخزين المقالات وعروض العمولة. اللوحة مستقلة في هذا المجلد ويمكن رفع محتويات `admin/` إلى مستودع واستضافة منفصلين؛ لا ترفع إعدادات مشروعك إلا بعد استبدال القيم التجريبية.
 
+## تثبيت Firebase للتطوير
+
+من جذر مستودع اللوحة شغّل `npm install` لتثبيت Firebase من `package.json`. الواجهة الحالية تستورد Firebase Web SDK كـ JavaScript modules من شبكة Firebase، لذا لا تحتاج إلى خادم Node.js أو خطوة build لتشغيل `index.html`. مجلد `node_modules/` مستثنى من Git.
+
 ## إعداد Firebase
 
 1. في مشروع Firebase، أضف تطبيق Web، وأنشئ قاعدة Cloud Firestore.

@@ -1,0 +1,7 @@
+{
+  "name": "nexora-admin",
+  "private": true,
+  "dependencies": {
+    "firebase": "^13.0.0"
+  }
+}
