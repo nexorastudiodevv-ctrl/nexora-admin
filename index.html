@@ -106,7 +106,13 @@
               <label>نوع المجانية<select name="pricing" required><option value="free">مجاني بالكامل</option><option value="freemium">خطة مجانية متاحة</option></select></label>
               <label>الوصف<textarea name="description" rows="3" maxlength="300" required></textarea></label>
               <label>رابط الزيارة أو التحميل<input name="url" type="url" inputmode="url" placeholder="https://" required /></label>
-              <label>رابط الشعار (اختياري)<input name="imageUrl" type="url" inputmode="url" placeholder="https://" /></label>
+              <label>رابط صورة الكارت (اختياري)
+                <input name="imageUrl" type="url" inputmode="url" placeholder="https://example.com/service-cover.jpg" />
+                <small>يفضل صورة عرض أفقي لا تقل أبعادها عن 1200×630 بكسل.</small>
+              </label>
+              <div class="service-image-preview" data-service-image-preview hidden>
+                <img alt="معاينة صورة خدمة مجانية" />
+              </div>
               <label>ترتيب الظهور<input name="order" type="number" min="0" max="9999" step="1" value="100" required /></label>
               <label class="checkbox-label"><input name="isPublished" type="checkbox" /> إظهار الخدمة في الموقع</label>
               <div class="form-actions"><button class="button button-primary" type="submit">حفظ الخدمة</button><button class="button button-quiet" type="button" data-cancel-service>إلغاء</button></div>

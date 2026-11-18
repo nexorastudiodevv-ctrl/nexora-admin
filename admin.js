@@ -34,6 +34,7 @@ const elements = {
   serviceForm: document.querySelector("[data-service-form]"),
   serviceFormTitle: document.querySelector("[data-service-form-title]"),
   serviceList: document.querySelector("[data-service-list]"),
+  serviceImagePreview: document.querySelector("[data-service-image-preview]"),
 };
 
 const categories = {
@@ -95,7 +96,27 @@ function resetServiceForm() {
   setFormValue(elements.serviceForm, "id", "");
   setFormValue(elements.serviceForm, "order", 100);
   elements.serviceFormTitle.textContent = "خدمة جديدة";
+  updateServiceImagePreview("");
   elements.serviceForm.hidden = true;
+}
+
+function updateServiceImagePreview(value) {
+  const preview = elements.serviceImagePreview;
+  const image = preview.querySelector("img");
+  const url = String(value || "").trim();
+  if (!url) {
+    preview.hidden = true;
+    image.removeAttribute("src");
+    return;
+  }
+  try {
+    if (!["http:", "https:"].includes(new URL(url).protocol)) return;
+  } catch {
+    preview.hidden = true;
+    return;
+  }
+  image.src = url;
+  preview.hidden = false;
 }
 
 function addRecordActions(container, id, editHandler, collectionName) {
@@ -298,6 +319,7 @@ function openServiceEditor(service = null) {
   setFormValue(elements.serviceForm, "imageUrl", service?.imageUrl);
   setFormValue(elements.serviceForm, "order", service?.order ?? 100);
   setFormValue(elements.serviceForm, "isPublished", service?.status === "published");
+  updateServiceImagePreview(service?.imageUrl);
   elements.serviceForm.hidden = false;
   elements.serviceForm.scrollIntoView({ behavior: "smooth", block: "start" });
 }
@@ -486,6 +508,9 @@ document.querySelector("[data-new-offer]").addEventListener("click", () => openO
 document.querySelector("[data-cancel-offer]").addEventListener("click", resetOfferForm);
 document.querySelector("[data-new-service]").addEventListener("click", () => openServiceEditor());
 document.querySelector("[data-cancel-service]").addEventListener("click", resetServiceForm);
+elements.serviceForm.elements.namedItem("imageUrl").addEventListener("input", (event) => {
+  updateServiceImagePreview(event.target.value);
+});
 
 document.querySelectorAll("[data-tab]").forEach((tab) => {
   tab.addEventListener("click", () => {
