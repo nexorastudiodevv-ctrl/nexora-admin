@@ -31,6 +31,9 @@ const elements = {
   offerForm: document.querySelector("[data-offer-form]"),
   offerFormTitle: document.querySelector("[data-offer-form-title]"),
   offerList: document.querySelector("[data-offer-list]"),
+  serviceForm: document.querySelector("[data-service-form]"),
+  serviceFormTitle: document.querySelector("[data-service-form-title]"),
+  serviceList: document.querySelector("[data-service-list]"),
 };
 
 const categories = {
@@ -87,6 +90,14 @@ function resetOfferForm() {
   elements.offerForm.hidden = true;
 }
 
+function resetServiceForm() {
+  elements.serviceForm.reset();
+  setFormValue(elements.serviceForm, "id", "");
+  setFormValue(elements.serviceForm, "order", 100);
+  elements.serviceFormTitle.textContent = "خدمة جديدة";
+  elements.serviceForm.hidden = true;
+}
+
 function addRecordActions(container, id, editHandler, collectionName) {
   const actions = document.createElement("div");
   actions.className = "record-actions";
@@ -120,6 +131,7 @@ function addRecordActions(container, id, editHandler, collectionName) {
 let database;
 let articles = [];
 let offers = [];
+let services = [];
 
 function renderArticles() {
   elements.articleList.replaceChildren();
@@ -173,6 +185,30 @@ function renderOffers() {
   renderOfferCheckboxes(selectedOfferIds);
 }
 
+function renderServices() {
+  elements.serviceList.replaceChildren();
+  if (services.length === 0) {
+    const empty = document.createElement("p");
+    empty.className = "muted";
+    empty.textContent = "لا توجد خدمات محفوظة بعد.";
+    elements.serviceList.append(empty);
+    return;
+  }
+  services.forEach((service) => {
+    const record = document.createElement("article");
+    record.className = "record";
+    const details = document.createElement("div");
+    const title = document.createElement("h4");
+    title.textContent = service.name;
+    const metadata = document.createElement("p");
+    metadata.textContent = `${service.category} · ${service.serviceType} · ${service.status === "published" ? "منشور" : "مسودة"} · الضغطات: ${service.clicks || 0}`;
+    details.append(title, metadata);
+    record.append(details);
+    addRecordActions(record, service.id, () => openServiceEditor(service), "freeServices");
+    elements.serviceList.append(record);
+  });
+}
+
 function renderOfferCheckboxes(selectedIds = []) {
   elements.articleOffers.replaceChildren();
   const availableOffers = offers.filter((offer) => offer.status === "published");
@@ -198,9 +234,10 @@ function renderOfferCheckboxes(selectedIds = []) {
 }
 
 async function refreshData() {
-  const [articleSnapshot, offerSnapshot] = await Promise.all([
+  const [articleSnapshot, offerSnapshot, serviceSnapshot] = await Promise.all([
     getDocs(collection(database, "articles")),
     getDocs(collection(database, "affiliateOffers")),
+    getDocs(collection(database, "freeServices")),
   ]);
   articles = articleSnapshot.docs
     .map((item) => ({ id: item.id, ...item.data() }))
@@ -208,8 +245,12 @@ async function refreshData() {
   offers = offerSnapshot.docs
     .map((item) => ({ id: item.id, ...item.data() }))
     .sort((first, second) => first.partner.localeCompare(second.partner));
+  services = serviceSnapshot.docs
+    .map((item) => ({ id: item.id, ...item.data() }))
+    .sort((first, second) => (first.order ?? 100) - (second.order ?? 100));
   renderArticles();
   renderOffers();
+  renderServices();
 }
 
 function openArticleEditor(article = null) {
@@ -242,6 +283,23 @@ function openOfferEditor(offer = null) {
   setFormValue(elements.offerForm, "isPublished", offer?.status === "published");
   elements.offerForm.hidden = false;
   elements.offerForm.scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
+function openServiceEditor(service = null) {
+  elements.serviceForm.reset();
+  elements.serviceFormTitle.textContent = service ? "تعديل الخدمة" : "خدمة جديدة";
+  setFormValue(elements.serviceForm, "id", service?.id);
+  setFormValue(elements.serviceForm, "name", service?.name);
+  setFormValue(elements.serviceForm, "category", service?.category || "ai");
+  setFormValue(elements.serviceForm, "serviceType", service?.serviceType || "website");
+  setFormValue(elements.serviceForm, "pricing", service?.pricing || "free");
+  setFormValue(elements.serviceForm, "description", service?.description);
+  setFormValue(elements.serviceForm, "url", service?.url);
+  setFormValue(elements.serviceForm, "imageUrl", service?.imageUrl);
+  setFormValue(elements.serviceForm, "order", service?.order ?? 100);
+  setFormValue(elements.serviceForm, "isPublished", service?.status === "published");
+  elements.serviceForm.hidden = false;
+  elements.serviceForm.scrollIntoView({ behavior: "smooth", block: "start" });
 }
 
 function collectOfferIds() {
@@ -377,12 +435,57 @@ if (!isConfigured || !adminEmail) {
       button.disabled = false;
     }
   });
+
+  elements.serviceForm.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const button = elements.serviceForm.querySelector('button[type="submit"]');
+    const formData = new FormData(elements.serviceForm);
+    const id = String(formData.get("id"));
+    const url = String(formData.get("url")).trim();
+    const imageUrl = String(formData.get("imageUrl")).trim();
+    try {
+      if (!["http:", "https:"].includes(new URL(url).protocol)
+        || (imageUrl && !["http:", "https:"].includes(new URL(imageUrl).protocol))) {
+        showNotice("يجب أن تبدأ روابط الخدمة والصورة بـ http:// أو https://.");
+        return;
+      }
+    } catch {
+      showNotice("أدخل روابط صالحة تبدأ بـ http:// أو https://.");
+      return;
+    }
+    button.disabled = true;
+    try {
+      const service = {
+        name: String(formData.get("name")).trim(),
+        category: String(formData.get("category")),
+        serviceType: String(formData.get("serviceType")),
+        pricing: String(formData.get("pricing")),
+        description: String(formData.get("description")).trim(),
+        url,
+        imageUrl,
+        order: Number(formData.get("order")) || 100,
+        status: formData.get("isPublished") ? "published" : "draft",
+        updatedAt: serverTimestamp(),
+      };
+      if (id) await setDoc(doc(database, "freeServices", id), service, { merge: true });
+      else await addDoc(collection(database, "freeServices"), { ...service, clicks: 0 });
+      resetServiceForm();
+      await refreshData();
+      showNotice("تم حفظ الخدمة.", "success");
+    } catch (error) {
+      showNotice(errorMessage(error));
+    } finally {
+      button.disabled = false;
+    }
+  });
 }
 
 document.querySelector("[data-new-article]").addEventListener("click", () => openArticleEditor());
 document.querySelector("[data-cancel-article]").addEventListener("click", resetArticleForm);
 document.querySelector("[data-new-offer]").addEventListener("click", () => openOfferEditor());
 document.querySelector("[data-cancel-offer]").addEventListener("click", resetOfferForm);
+document.querySelector("[data-new-service]").addEventListener("click", () => openServiceEditor());
+document.querySelector("[data-cancel-service]").addEventListener("click", resetServiceForm);
 
 document.querySelectorAll("[data-tab]").forEach((tab) => {
   tab.addEventListener("click", () => {

@@ -15,5 +15,14 @@ service cloud.firestore {
       allow read: if isAdmin() || resource.data.status == "published";
       allow create, update, delete: if isAdmin();
     }
+
+    match /freeServices/{serviceId} {
+      allow read: if isAdmin() || resource.data.status == "published";
+      allow create, delete: if isAdmin();
+      allow update: if isAdmin()
+        || (resource.data.status == "published"
+          && request.resource.data.diff(resource.data).affectedKeys().hasOnly(["clicks"])
+          && request.resource.data.clicks == resource.data.clicks + 1);
+    }
   }
 }

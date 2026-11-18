@@ -21,7 +21,7 @@
         <div>
           <p class="eyebrow">NEXORA STUDIO EG</p>
           <h1>لوحة إدارة المحتوى</h1>
-          <p>أدر مقالات المدونة وعروض التسوق بالعمولة من هاتفك أو حاسوبك.</p>
+          <p>أدر مقالات المدونة وعروض العمولة والخدمات المجانية من هاتفك أو حاسوبك.</p>
         </div>
         <div class="header-links">
           <button class="button button-quiet" type="button" data-install-app>تثبيت التطبيق</button>
@@ -51,6 +51,7 @@
         <nav class="tabs" aria-label="أقسام لوحة التحكم">
           <button class="tab is-active" type="button" data-tab="articles" aria-selected="true">المقالات</button>
           <button class="tab" type="button" data-tab="offers" aria-selected="false">عروض العمولة</button>
+          <button class="tab" type="button" data-tab="services" aria-selected="false">الخدمات المجانية</button>
         </nav>
 
         <section class="tab-panel is-active" data-panel="articles">
@@ -90,6 +91,27 @@
               <div class="form-actions"><button class="button button-primary" type="submit">حفظ العرض</button><button class="button button-quiet" type="button" data-cancel-offer>إلغاء</button></div>
             </form>
             <div class="panel list-panel"><h3>العروض المحفوظة</h3><div class="record-list" data-offer-list><p class="muted">جارٍ التحميل…</p></div></div>
+          </div>
+        </section>
+
+        <section class="tab-panel" data-panel="services" hidden>
+          <div class="section-heading"><div><h2>الخدمات المجانية</h2><p class="muted">أضف مواقع وتطبيقات مجانية وحدد إن كانت مجانية بالكامل أو جزئيًا.</p></div><button class="button button-primary" type="button" data-new-service>＋ خدمة جديدة</button></div>
+          <div class="content-layout">
+            <form class="panel editor" data-service-form hidden>
+              <h3 data-service-form-title>خدمة جديدة</h3>
+              <input name="id" type="hidden" />
+              <label>اسم الخدمة<input name="name" maxlength="100" required /></label>
+              <label>القسم<select name="category" required><option value="ai">الذكاء الاصطناعي</option><option value="design">التصميم والإبداع</option><option value="development">البرمجة والتطوير</option><option value="productivity">الإنتاجية</option><option value="education">التعليم</option><option value="network">الشبكات والأدوات</option><option value="other">خدمات أخرى</option></select></label>
+              <label>نوع الخدمة<select name="serviceType" required><option value="website">موقع إلكتروني</option><option value="app">تطبيق للتحميل</option><option value="web-app">تطبيق ويب</option></select></label>
+              <label>نوع المجانية<select name="pricing" required><option value="free">مجاني بالكامل</option><option value="freemium">خطة مجانية متاحة</option></select></label>
+              <label>الوصف<textarea name="description" rows="3" maxlength="300" required></textarea></label>
+              <label>رابط الزيارة أو التحميل<input name="url" type="url" inputmode="url" placeholder="https://" required /></label>
+              <label>رابط الشعار (اختياري)<input name="imageUrl" type="url" inputmode="url" placeholder="https://" /></label>
+              <label>ترتيب الظهور<input name="order" type="number" min="0" max="9999" step="1" value="100" required /></label>
+              <label class="checkbox-label"><input name="isPublished" type="checkbox" /> إظهار الخدمة في الموقع</label>
+              <div class="form-actions"><button class="button button-primary" type="submit">حفظ الخدمة</button><button class="button button-quiet" type="button" data-cancel-service>إلغاء</button></div>
+            </form>
+            <div class="panel list-panel"><h3>الخدمات المحفوظة</h3><div class="record-list" data-service-list><p class="muted">جارٍ التحميل…</p></div></div>
           </div>
         </section>
       </section>
