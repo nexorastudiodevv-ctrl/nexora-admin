@@ -58,8 +58,11 @@ function showNotice(message, kind = "error") {
 }
 
 function errorMessage(error) {
-  if (error.code === "permission-denied" || error.code === "auth/unauthorized-domain") {
-    return "تعذّر الوصول. تحقّق من صلاحيات Firestore والنطاقات المسموح بها في Firebase Authentication.";
+  if (error.code === "permission-denied") {
+    return "تعذّر تحميل بيانات Firestore: صلاحية القراءة غير منشورة أو قواعد الوصول لا تسمح لحساب المدير.";
+  }
+  if (error.code === "auth/unauthorized-domain") {
+    return "النطاق الحالي غير مسموح في Firebase Authentication. أضف نطاق اللوحة إلى Authorized domains.";
   }
   if (error.code === "auth/invalid-credential" || error.code === "auth/invalid-login-credentials") {
     return "بيانات الدخول غير صحيحة، أو لم يتم تفعيل حساب المدير.";
@@ -255,23 +258,32 @@ function renderOfferCheckboxes(selectedIds = []) {
 }
 
 async function refreshData() {
-  const [articleSnapshot, offerSnapshot, serviceSnapshot] = await Promise.all([
+  const results = await Promise.allSettled([
     getDocs(collection(database, "articles")),
     getDocs(collection(database, "affiliateOffers")),
     getDocs(collection(database, "freeServices")),
   ]);
-  articles = articleSnapshot.docs
+  const firstFailure = results.find((result) => result.status === "rejected");
+  const [articleResult, offerResult, serviceResult] = results;
+  articles = articleResult.status === "fulfilled"
+    ? articleResult.value.docs
     .map((item) => ({ id: item.id, ...item.data() }))
-    .sort((first, second) => (second.updatedAt?.seconds || 0) - (first.updatedAt?.seconds || 0));
-  offers = offerSnapshot.docs
+    .sort((first, second) => (second.updatedAt?.seconds || 0) - (first.updatedAt?.seconds || 0))
+    : [];
+  offers = offerResult.status === "fulfilled"
+    ? offerResult.value.docs
     .map((item) => ({ id: item.id, ...item.data() }))
-    .sort((first, second) => first.partner.localeCompare(second.partner));
-  services = serviceSnapshot.docs
+    .sort((first, second) => first.partner.localeCompare(second.partner))
+    : [];
+  services = serviceResult.status === "fulfilled"
+    ? serviceResult.value.docs
     .map((item) => ({ id: item.id, ...item.data() }))
-    .sort((first, second) => (first.order ?? 100) - (second.order ?? 100));
+    .sort((first, second) => (first.order ?? 100) - (second.order ?? 100))
+    : [];
   renderArticles();
   renderOffers();
   renderServices();
+  if (firstFailure) throw firstFailure.reason;
 }
 
 function openArticleEditor(article = null) {
